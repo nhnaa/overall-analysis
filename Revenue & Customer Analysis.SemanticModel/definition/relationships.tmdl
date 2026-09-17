@@ -1,0 +1,15 @@
+relationship 851d9431-b492-419e-a559-1bef3245edd6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: file.Transaction_Date
+	toColumn: LocalDateTable_f36930c1-6e85-4499-9681-2c4e818ec634.Date
+
+relationship 1d1b2410-baaa-4c5c-90ae-48da3e9e57b5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: file.Snapshot_Date
+	toColumn: LocalDateTable_8f90080d-161a-4372-85aa-589b057f9dec.Date
+
+relationship 0c0dd959-d765-5e4f-10f4-e11642edc81f
+	crossFilteringBehavior: bothDirections
+	fromColumn: file.CustomerID
+	toColumn: RFM_Table.CustomerID
+

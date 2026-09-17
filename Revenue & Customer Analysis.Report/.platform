@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Revenue & Customer Analysis"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2d17f53f-a76a-49d7-90d4-f924abe63d19"
+  }
+}

@@ -1,0 +1,130 @@
+table RFM_Table
+	lineageTag: c0772e46-ee34-49ac-99d5-16c7c3234b08
+
+	measure Recency_Q1 = PERCENTILEX.INC(RFM_Table, RFM_Table[Recency], 0.25)
+		lineageTag: d5236058-fc14-416a-82d4-7e2ef5048422
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Recency_Q3 = PERCENTILEX.INC(RFM_Table, RFM_Table[Recency], 0.75)
+		lineageTag: 69ec3328-efe8-44cb-bc3b-caa5e766edae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Frequency_Q1 = PERCENTILEX.INC(RFM_Table, RFM_Table[Frequency], 0.25)
+		lineageTag: b67f5b6c-f5b1-4a34-ad2f-c808ba74181d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Frequency_Q3 = PERCENTILEX.INC(RFM_Table, RFM_Table[Frequency], 0.75)
+		lineageTag: b107468c-7e9e-4337-9ac1-91c13b6ed0ee
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CustomerID
+		formatString: 0
+		lineageTag: 63efe04a-e5f7-4bec-a737-085b136e1136
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: file[CustomerID]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Recency
+		formatString: 0
+		lineageTag: 0bb6ea85-82b3-4148-960c-5644f54c9738
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Recency]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frequency
+		formatString: 0
+		lineageTag: f83d77ee-2ad0-4de9-b223-d907b53af326
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Frequency]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Monetary
+		lineageTag: 5d21cef1-d552-4892-9f75-54da6866e60e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Monetary]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Recency_Label =
+			
+			VAR r = RFM_Table[Recency]
+			VAR q1 = PERCENTILEX.INC(RFM_Table, RFM_Table[Recency], 0.25)
+			VAR q3 = PERCENTILEX.INC(RFM_Table, RFM_Table[Recency], 0.75)
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        r <= q1, "High",
+			        r <= q3, "Mid",
+			        "Low"
+			    )
+		lineageTag: 83b7d112-4a69-484b-bdf4-d119e94c0467
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frequency_Label =
+			
+			VAR f = RFM_Table[Frequency]
+			VAR q1 = PERCENTILEX.INC(RFM_Table, RFM_Table[Frequency], 0.25)
+			VAR q3 = PERCENTILEX.INC(RFM_Table, RFM_Table[Frequency], 0.75)
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        f <= q1, "Low",
+			        f <= q3, "Mid",
+			        "High"
+			    )
+		lineageTag: 7f2dafa6-fdac-4cac-b24f-d7abe661e332
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column RF_Segment =
+			
+			VAR r_label = RFM_Table[Recency_Label]
+			VAR f_label = RFM_Table[Frequency_Label]
+			VAR f = RFM_Table[Frequency]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        r_label = "High" && f_label = "High" && f >= 2, "Best Customer",
+			        r_label = "High" && (f_label = "Mid" || f_label = "Low"), "Potential Loyalists",
+			        (r_label = "Mid" || r_label = "Low") && f_label = "High", "Need Attention",
+			        "Hibernating"
+			    )
+		lineageTag: 26bb44fb-036f-4346-a92f-831dbd68008a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition RFM_Table = calculated
+		mode: import
+		source =
+				
+				SUMMARIZE(
+				    'file',
+				    'file'[CustomerID],
+				    "Recency", DATEDIFF(
+				        CALCULATE(MAX('file'[Transaction_Date])),
+				        CALCULATE(MAX('file'[Transaction_Date]), ALL('file')),
+				        DAY
+				    ),
+				    "Frequency", COUNT('file'[Transaction_ID]),
+				    "Monetary", SUM('file'[Invoice])
+				)
+
+	annotation PBI_Id = 12f4a3bec0214ae9992996850e670e31
+

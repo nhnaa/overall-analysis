@@ -1,0 +1,289 @@
+table file
+	lineageTag: 6553c79b-079c-4fdb-a376-e76cdcf46933
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 809c233e-ff88-47e7-b12b-9cb52c684a25
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: ad99387e-c64e-43d3-83f8-21fa0fdba805
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 1f12cdf5-71ea-4c32-88ad-137fb13d412c
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tenure_Months
+		dataType: int64
+		formatString: 0
+		lineageTag: fa1c28b6-29ee-40fc-9ec2-b4e5fe3a8e2a
+		summarizeBy: sum
+		sourceColumn: Tenure_Months
+
+		annotation SummarizationSetBy = Automatic
+
+	column Transaction_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b5960fa-664f-478a-91c9-a908a136c008
+		summarizeBy: count
+		sourceColumn: Transaction_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Transaction_Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6680320c-787c-4c25-bed1-662b0d92bf59
+		summarizeBy: none
+		sourceColumn: Transaction_Date
+
+		variation Variation
+			isDefault
+			relationship: 851d9431-b492-419e-a559-1bef3245edd6
+			defaultHierarchy: LocalDateTable_f36930c1-6e85-4499-9681-2c4e818ec634.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Product_SKU
+		dataType: string
+		lineageTag: 3b1fc54d-ceab-4d64-94eb-f6160ee8d9cd
+		summarizeBy: none
+		sourceColumn: Product_SKU
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Description
+		dataType: string
+		lineageTag: 377572f5-48df-4cda-b52d-29a93020e07b
+		summarizeBy: none
+		sourceColumn: Product_Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Category
+		dataType: string
+		lineageTag: fab266f5-775e-4d62-bf5c-24873ff91d2d
+		summarizeBy: none
+		sourceColumn: Product_Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: f229fbaa-6939-45a3-81c8-b851ae1274ab
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column Avg_Price
+		dataType: double
+		lineageTag: 13d7f7b6-96e9-4c43-be4b-41b8eef406b5
+		summarizeBy: sum
+		sourceColumn: Avg_Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Delivery_Charges
+		dataType: double
+		lineageTag: 0f520472-f367-4779-9310-6fbb61beac73
+		summarizeBy: sum
+		sourceColumn: Delivery_Charges
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Coupon_Status
+		dataType: string
+		lineageTag: bcef7bfe-37b9-4d88-8bc0-3d6d6ede6b6e
+		summarizeBy: none
+		sourceColumn: Coupon_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column GST
+		dataType: double
+		lineageTag: 1477750e-9d93-48ec-bfa8-d7c9779499a1
+		summarizeBy: sum
+		sourceColumn: GST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Offline_Spend
+		dataType: int64
+		formatString: 0
+		lineageTag: 871b4634-4961-4302-9787-a311d9d57f30
+		summarizeBy: sum
+		sourceColumn: Offline_Spend
+
+		annotation SummarizationSetBy = Automatic
+
+	column Online_Spend
+		dataType: double
+		lineageTag: e2b2f94c-0217-4e0a-b664-43a111def011
+		summarizeBy: sum
+		sourceColumn: Online_Spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: a0fc9c10-fc35-481e-a3e7-7e7ef3d0cfba
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Coupon_Code
+		dataType: string
+		lineageTag: 0a83bd1a-0798-4d93-acbf-0a97e03b0939
+		summarizeBy: none
+		sourceColumn: Coupon_Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Discount_pct
+		dataType: int64
+		formatString: 0
+		lineageTag: 91efbf94-0d70-46eb-8bc9-6e9744df4634
+		summarizeBy: sum
+		sourceColumn: Discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column Invoice = ```
+			
+			IF (
+			    'file'[Coupon_Status] = "Used",
+			    (
+			        ('file'[Quantity] * 'file'[Avg_Price]) 
+			        * (1 - 'file'[Discount_pct] / 100)
+			        * (1 + 'file'[GST])
+			    ) + 'file'[Delivery_Charges],
+			    (
+			        ('file'[Quantity] * 'file'[Avg_Price]) 
+			        * (1 + 'file'[GST])
+			    ) + 'file'[Delivery_Charges]
+			)
+			
+			```
+		lineageTag: 62db05c7-d66a-4296-9d16-b2c5326d82f7
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date = FORMAT(DATEVALUE('file'[Transaction_Date]), "MM/dd/yyyy")
+		lineageTag: c2e162c6-f281-4d97-9f68-7edec7317a2a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayName = FORMAT(DATEVALUE('file'[Transaction_Date]), "dddd")
+		lineageTag: e92b5f4f-6d73-4d3c-b82e-6dd4dc03e8fe
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day = DAY(DATEVALUE('file'[Transaction_Date]))
+		formatString: 0
+		lineageTag: 47e5bc69-18ac-4333-bea5-4b6266cd0e85
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year = YEAR(DATEVALUE('file'[Transaction_Date]))
+		formatString: 0
+		lineageTag: 229b934b-250b-4b4f-8a3f-7b9023ba84de
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Season =
+			
+			SWITCH(
+			    TRUE(),
+			    file[Month] IN {12, 1, 2}, "Winter",
+			    file[Month] IN {3, 4, 5}, "Spring",
+			    file[Month] IN {6, 7, 8}, "Summer",
+			    file[Month] IN {9, 10, 11}, "Autumn",
+			    BLANK()
+			)
+		lineageTag: 33caae88-1a70-4610-ad97-f9e38590751d
+		summarizeBy: none
+		sortByColumn: SeasonOrder
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column SeasonOrder =
+			
+			SWITCH(
+			    TRUE(),
+			    file[Month] IN {12, 1, 2}, 4,
+			    file[Month] IN {3, 4, 5}, 1,
+			    file[Month] IN {6, 7, 8}, 2,
+			    file[Month] IN {9, 10, 11}, 3
+			)
+		formatString: 0
+		lineageTag: 9c27493c-7086-4371-8d4c-b995e3a9f63b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Snapshot_Date = CALCULATE(MAX('file'[Transaction_Date]), ALL('file'))
+		formatString: General Date
+		lineageTag: 28f73861-d5fc-427c-a8c7-ffc3dc6baaa4
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 1d1b2410-baaa-4c5c-90ae-48da3e9e57b5
+			defaultHierarchy: LocalDateTable_8f90080d-161a-4372-85aa-589b057f9dec.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition file = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Ngoc Han\Downloads\file.csv\file.csv"),[Delimiter=",", Columns=21, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"", Int64.Type}, {"CustomerID", Int64.Type}, {"Gender", type text}, {"Location", type text}, {"Tenure_Months", Int64.Type}, {"Transaction_ID", Int64.Type}, {"Transaction_Date", type date}, {"Product_SKU", type text}, {"Product_Description", type text}, {"Product_Category", type text}, {"Quantity", Int64.Type}, {"Avg_Price", type number}, {"Delivery_Charges", type number}, {"Coupon_Status", type text}, {"GST", type number}, {"Date", type date}, {"Offline_Spend", Int64.Type}, {"Online_Spend", type number}, {"Month", Int64.Type}, {"Coupon_Code", type text}, {"Discount_pct", Int64.Type}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Date"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Removed Columns", each [CustomerID] <> null and [CustomerID] <> ""),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Filtered Rows",{"Column1"})
+				in
+				    #"Removed Columns1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
